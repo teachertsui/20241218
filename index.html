@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>數學測驗系統</title>
+    <style>
+        :root {
+            --primary-color: #a8d8ea;    /* 淡藍色 */
+            --secondary-color: #aa96da;   /* 淡紫色 */
+            --accent-color: #fcbad3;      /* 淡粉色 */
+            --light-color: #ffffd2;       /* 淡黃色 */
+            --background-color: #f5f7fa;  /* 淺灰背景 */
+            --text-color: #5a6777;        /* 深灰文字 */
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .welcome-screen {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 15px;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .welcome-screen h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .welcome-screen p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .start-btn {
+            padding: 12px 35px;
+            font-size: 1.1em;
+            background-color: white;
+            color: var(--secondary-color);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .timer {
+            text-align: center;
+            font-size: 1.2em;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: var(--light-color);
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .progress-bar {
+            background-color: #eef2f7;
+            height: 10px;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .question {
+            margin: 25px 0;
+            padding: 25px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .question h3 {
+            color: var(--text-color);
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .option-label {
+            display: block;
+            margin: 12px 0;
+            padding: 12px 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-label:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .result {
+            text-align: center;
+            margin-top: 30px;
+            padding: 30px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 15px;
+            color: white;
+        }
+
+        .result h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .result p {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+
+        .restart-btn {
+            display: inline-block;
+            margin: 20px auto;
+            padding: 12px 35px;
+            background-color: white;
+            color: var(--secondary-color);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: transform 0.3s ease;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        #quiz-content {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="welcome-screen" class="welcome-screen">
+            <h1>歡迎參加數學測驗</h1>
+            <p>這是一個簡單的數學測驗，共有5題選擇題。<br>
+               每題有20秒的作答時間，請仔細閱讀後作答。<br>
+               準備好了嗎？讓我們開始吧！</p>
+            <button id="start-btn" class="start-btn">開始測驗</button>
+        </div>
+
+        <div id="quiz-content">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+
+            <div class="timer">
+                剩餘時間：<span id="timeLeft">20</span> 秒
+            </div>
+
+            <div id="questions"></div>
+            <div id="result"></div>
+        </div>
+    </div>
+    <script>
+           // 在最上方添加事件監聽器
+    document.addEventListener('DOMContentLoaded', function() {
+        // 綁定開始按鈕的點擊事件
+        document.getElementById('start-btn').addEventListener('click', startTest);
+    });
+
+        const questions = [
+            {
+                question: "1+3+6=?",
+                A: "14",
+                B: "12",
+                C: "11",
+                D: "10",
+                answer: "D"
+            },
+            {
+                question: "10+2+2=?",
+                A: "13",
+                B: "14",
+                C: "15",
+                D: "16",
+                answer: "B"
+            },
+            {
+                question: "6+8+5=?",
+                A: "20",
+                B: "19",
+                C: "18",
+                D: "17",
+                answer: "B"
+            },
+            {
+                question: "16+18=?",
+                A: "32",
+                B: "33",
+                C: "34",
+                D: "35",
+                answer: "C"
+            },
+            {
+                question: "33+54+2=?",
+                A: "89",
+                B: "88",
+                C: "87",
+                D: "86",
+                answer: "A"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let timer;
+        let timeLeft = 20;
+        let totalScore = 0;
+
+        function startTest() {
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('quiz-content').style.display = 'block';
+            startQuiz();
+        }
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            totalScore = 0;
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                showResult();
+                return;
+            }
+
+            const question = questions[currentQuestionIndex];
+            const questionDiv = document.getElementById('questions');
+            
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.querySelector('.progress-fill').style.width = `${progress}%`;
+
+            questionDiv.innerHTML = `
+                <div class="question">
+                    <h3>${currentQuestionIndex + 1}. ${question.question}</h3>
+                    <label class="option-label">
+                        <input type="radio" name="answer" value="A"> A. ${question.A}
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="answer" value="B"> B. ${question.B}
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="answer" value="C"> C. ${question.C}
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="answer" value="D"> D. ${question.D}
+                    </label>
+                </div>
+            `;
+
+            const options = document.querySelectorAll('input[name="answer"]');
+            options.forEach(option => {
+                option.addEventListener('change', checkAnswer);
+            });
+
+            startTimer();
+        }
+
+        function startTimer() {
+            timeLeft = 20;
+            updateTimer();
+            clearInterval(timer);
+            timer = setInterval(() => {
+                timeLeft--;
+                updateTimer();
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    nextQuestion();
+                }
+            }, 1000);
+        }
+
+        function updateTimer() {
+            document.getElementById('timeLeft').textContent = timeLeft;
+        }
+
+        function checkAnswer(e) {
+            clearInterval(timer);
+            const selectedAnswer = e.target.value;
+            const correctAnswer = questions[currentQuestionIndex].answer;
+            
+            if (selectedAnswer === correctAnswer) {
+                totalScore++;
+            }
+
+            setTimeout(nextQuestion, 500);
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            displayQuestion();
+        }
+
+        function showResult() {
+            const resultDiv = document.getElementById('result');
+            const percentage = (totalScore / questions.length) * 100;
+            
+            let message = '';
+            if (percentage === 100) {
+                message = '太棒了！你真是個天才！';
+            } else if (percentage >= 80) {
+                message = '表現優秀！繼續保持！';
+            } else if (percentage >= 60) {
+                message = '及格了！還有進步空間！';
+            } else {
+                message = '再接再厲，相信你可以做得更好！';
+            }
+
+            resultDiv.innerHTML = `
+                <div class="result">
+                    <h2>測驗完成！</h2>
+                    <p>得分：${totalScore} / ${questions.length}</p>
+                    <p>正確率：${percentage}%</p>
+                    <p>${message}</p>
+                    <button class="restart-btn" onclick="location.reload()">重新開始</button>
+                </div>
+            `;
+            
+            document.getElementById('questions').innerHTML = '';
+        }
+    </script>
+</body>
+</html>

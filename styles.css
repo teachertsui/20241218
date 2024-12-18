@@ -1,0 +1,177 @@
+:root {
+    --primary-color: #a8d8ea;    /* 淡藍色 */
+    --secondary-color: #aa96da;   /* 淡紫色 */
+    --accent-color: #fcbad3;      /* 淡粉色 */
+    --light-color: #ffffd2;       /* 淡黃色 */
+    --background-color: #f5f7fa;  /* 淺灰背景 */
+    --text-color: #5a6777;        /* 深灰文字 */
+}
+
+body {
+    font-family: 'Microsoft JhengHei', Arial, sans-serif;
+    background-color: var(--background-color);
+    margin: 0;
+    padding: 20px;
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.welcome-screen {
+    text-align: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 15px;
+    color: white;
+    margin-bottom: 30px;
+}
+
+h1 {
+    text-align: center;
+    color: var(--secondary-color);
+    margin-bottom: 2rem;
+    font-size: 2.2rem;
+    font-weight: 600;
+}
+
+/* 進度條樣式 */
+.progress-container {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.progress-bar {
+    height: 8px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+/* 計時器樣式 */
+.timer-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.timer {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 25px;
+    background: var(--timer-color);
+    color: var(--text-color);
+    border-radius: 25px;
+    font-size: 1.1rem;
+    box-shadow: var(--shadow);
+}
+
+.timer-icon {
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+/* 題目樣式 */
+.question {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    transition: transform 0.2s ease;
+}
+
+.question p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.options {
+    display: grid;
+    gap: 12px;
+}
+
+.option-label {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.option-label:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+input[type="radio"] {
+    margin-right: 12px;
+    transform: scale(1.1);
+}
+
+/* 結果樣式 */
+.result {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.result h2 {
+    color: var(--secondary-color);
+    margin-bottom: 20px;
+}
+
+.result p {
+    font-size: 1.2rem;
+    margin: 10px 0;
+    color: var(--text-color);
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+        margin: 1rem auto;
+    }
+    
+    h1 {
+        font-size: 1.8rem;
+    }
+    
+    .question p {
+        font-size: 1.1rem;
+    }
+    
+    .timer {
+        font-size: 1rem;
+    }
+} 
